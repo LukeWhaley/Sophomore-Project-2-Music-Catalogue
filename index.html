@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <title>Music Catalogue</title>
+</head>
+
+<body>
+  <header>
+    <h1>Music Catalogue</h1>
+    <div class="tag"> Luke Whaley </div>
+  </header>
+
+  <!-- Home view -->
+  <main id="home">
+    
+    <div class = "tagtext">Tags:</div>
+    
+    <!-- Tag buttons -->
+    <div class ="grid">
+        <button class = "btn2" onclick="setTag('ambient')">ambient</button>
+        <button class = "btn2" onclick="setTag('upbeat')">upbeat</button>
+        <button class = "btn2" onclick="setTag('sad')">sad</button>
+        <button class = "btn2" onclick="setTag('funny')">funny</button>
+        <button class = "btn2" onclick="setTag('calm')">calm</button>
+        <button class = "btn2" onclick="setTag('intense')">intense</button>
+    </div>
+    
+    <!-- Covers -->
+    <div class="covers">
+      <figure class="cover-card" data-song="shack3D">
+        <figcaption class="title">3D Shack</figcaption> 
+      </figure>
+      <figure class="cover-card" data-song="wave">
+        <figcaption class="title">Wave</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="blooper">
+        <figcaption class="title">Blooper Battle</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="pizza">
+        <figcaption class="title">Pizza Time!</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="extreme">
+        <figcaption class="title">Extreme</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="puzzle">
+        <figcaption class="title">Puzzle</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="ginza">
+        <figcaption class="title">Ginza Line - 1:00 AM</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="backstory">
+        <figcaption class="title">Backstory</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="galaxy">
+        <figcaption class="title">Galaxy</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="longNose">
+        <figcaption class="title">Long Nose</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="quiet">
+        <figcaption class="title">Quiet Night</figcaption>
+      </figure>
+      <figure class="cover-card" data-song="end">
+        <figcaption class="title">End</figcaption>
+      </figure>
+    </div>
+  </main>
+
+  <!-- Song view -->
+  <section id="song" class="song">
+    
+    <header>
+      <strong class="songtitle" id="songTitle">Song</strong>
+      <button class="btn" id="btnBack">⟵ Back</button>
+    </header>
+
+    <br>
+    
+    <div class="tagtextsong">
+      <strong id="songTags">Tags:</strong>  
+    </div>
+    
+    <div class="thumb img">
+      <img id = "songImage" src="images/d1-1.png">
+    </div>
+    
+    <div class="center" id="center"> 
+        <audio controls id = "musicViewSong" src="music/shack3D.mp3"></audio>
+    </div>
+    
+    <div class="songDescription" id="songDescription"></div>
+
+  </section>
+
+  <script>
+    
+    const SONGS = {
+      shack3D:      { title: "3D Shack",      tags: "calm",    description: "So retro."},
+      wave:       { title: "Wave",     tags: "upbeat",    description: "I like the synth at 0:45."},
+      blooper:    { title: "Blooper Battle",      tags: "upbeat, intense, funny",    description: "Inspired by the boss music from Super Mario Sunshine."},
+      pizza:   { title: "Pizza Time!",      tags: "upbeat, funny",    description: "Cheesy pizza, slightly less cheesy song."},
+      extreme:       { title: "Extreme",      tags: "upbeat, intense",    description: "Fast. Futuristic. Breakcore."},
+      puzzle:  { title: "Puzzle",     tags: "calm",    description: "Clean and calculated synths for a thought-provoking puzzle."},
+      ginza:      { title: "Ginza Line - 1:00AM",     tags: "calm, ambient",    description: "I've been stuck in the subway all day and now I'm alone. But isn't it peaceful?"},
+      backstory:        { title: "Backstory",     tags: "sad",    description: "The song for when random contexts start to make sense on their own."},
+      galaxy:     { title: "Galaxy",      tags: "ambient",    description: "A celestial soundscape for a faraway galaxy."},
+      longNose:    { title: "Long Nose",      tags: "funny",    description: "Why the long nose?"},
+      quiet: { title: "Quiet Night",     tags: "ambient, calm",    description: "A dance of acoustic and electronic under a starlit sky."},
+      end:      { title: "End",      tags: "ambient, sad",    description: "It's the end."}
+    };
+
+    const home = document.getElementById('home');
+    const song = document.getElementById('song');
+    const grid = document.getElementById('grid');
+    const songTitle = document.getElementById('songTitle');
+    const btnBack = document.getElementById('btnBack');
+
+    
+    function openSong(key) {
+      const d = SONGS[key];
+      if (!d) return;
+      songTitle.textContent = d.title;
+      songTags.textContent = "Tags: " + d.tags;
+      
+      // update image
+      const imgEl = document.getElementById("songImage");
+      imgEl.src = `images/${key}.png`;
+
+      // update audio
+      const audioEl = document.getElementById("musicViewSong");
+      audioEl.src = `music/${key}.mp3`; 
+      
+      songDescription.textContent = "Description: " + d.description;
+      
+      home.style.display = 'none';
+      song.style.display = 'block';
+    }
+
+    function backHome() {
+      song.style.display = 'none';
+      home.style.display = 'flex';
+      stopAudio("musicViewSong");
+    }
+
+    function stopAudio(id) {
+      document.getElementById(id).pause(); 
+      document.getElementById(id).currentTime = 0;
+    }
+
+    let activeTags = new Set(); // store active tag filters
+
+    function setTag(tag) {
+      const btn = [...document.querySelectorAll('.btn2')].find(b => b.textContent === tag);
+      if (!btn) return;
+
+      // toggle active state
+      if (activeTags.has(tag)) {
+        activeTags.delete(tag);
+        btn.classList.remove('active');
+      } else {
+        activeTags.add(tag);
+        btn.classList.add('active');
+      }
+
+      filterSongs();
+    }
+
+    function filterSongs() {
+      document.querySelectorAll('.cover-card').forEach(card => {
+        const songKey = card.dataset.song;
+        const song = SONGS[songKey];
+
+        // If no tags are active, show all songs
+        if (activeTags.size === 0) {
+          card.style.display = '';
+          return;
+        }
+
+        // Otherwise show only those matching one or more active tags
+        const songTags = song.tags.split(',').map(t => t.trim());
+        const hasAllTags = [...activeTags].every(tag => songTags.includes(tag));
+
+        card.style.display = hasAllTags ? '' : 'none';
+      });
+    }
+
+    document.querySelectorAll('.cover-card').forEach(card => {
+      card.addEventListener('click', () => openSong(card.dataset.song));
+    });
+
+    btnBack.addEventListener('click', backHome);
+
+  </script>
+</body>
+</html>
